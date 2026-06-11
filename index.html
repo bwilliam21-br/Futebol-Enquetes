@@ -1,45 +1,5 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Futebol & Enquetes</title>
-  <style>
-    body{margin:0;font-family:Arial,sans-serif;background:#0b1210;color:#eef6ef}
-    .wrap{max-width:1200px;margin:0 auto;padding:20px}
-    .card{background:#101a16;border:1px solid #2f473c;border-radius:18px;padding:16px}
-    .rules{display:grid;gap:12px;margin-top:16px}
-    .rule{background:#101a16;border:1px solid #2f473c;border-radius:16px;padding:14px}
-    .muted{color:#adc2b2}
-    .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
-    .search{flex:1;min-height:44px;padding:0 14px;border-radius:999px;border:1px solid #2f473c;background:#0c1411;color:#eef6ef}
-    .btn{min-height:44px;border-radius:999px;border:1px solid #2f473c;background:#15231d;color:#eef6ef;padding:0 14px;font-weight:700}
-    .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:12px 0 16px}
-    .m{padding:14px;border-radius:16px;background:#101a16;border:1px solid #2f473c}
-    .m .v{font-size:2rem;font-weight:900}
-    @media (max-width:900px){.metrics{grid-template-columns:1fr}}
-  </style>
-</head>
-<body>
-<div class="wrap">
-  <div class="card">
-    <h1>Futebol & Enquetes</h1>
-    <p class="muted">Versão pública somente leitura.</p>
-    <div class="metrics">
-      <div class="m"><div class="muted">Regras</div><div class="v">21</div></div>
-      <div class="m"><div class="muted">Subitens</div><div class="v">5</div></div>
-      <div class="m"><div class="muted">Modo</div><div class="v">Public</div></div>
-      <div class="m"><div class="muted">Status</div><div class="v">OK</div></div>
-    </div>
-    <div class="toolbar">
-      <input id="search" class="search" placeholder="Pesquisar regra" />
-      <button id="clear" class="btn">Limpar</button>
-    </div>
-    <div id="rules" class="rules"></div>
-  </div>
-</div>
-<script>
-const rules = [
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Futebol & Enquetes</title><style>body{margin:0;font-family:Arial,sans-serif;background:#0b1210;color:#eef6ef}.wrap{max-width:1200px;margin:0 auto;padding:20px}.card,.rule{background:#101a16;border:1px solid #2f473c;border-radius:18px;padding:16px}.rules{display:grid;gap:12px}.muted{color:#adc2b2}.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}.search{flex:1;min-height:44px;padding:0 14px;border-radius:999px;border:1px solid #2f473c;background:#0c1411;color:#eef6ef}.btn{min-height:44px;border-radius:999px;border:1px solid #2f473c;background:#15231d;color:#eef6ef;padding:0 14px;font-weight:700}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:12px 0 16px}.m{padding:14px;border-radius:16px;background:#101a16;border:1px solid #2f473c}.m .v{font-size:2rem;font-weight:900}@media (max-width:900px){.metrics{grid-template-columns:1fr}}</style></head><body><div class="wrap"><div class="card"><h1>Futebol & Enquetes</h1><p class="muted">Versão pública somente leitura.</p><div class="metrics"><div class="m"><div class="muted">Regras</div><div class="v">21</div></div><div class="m"><div class="muted">Subitens</div><div class="v">9</div></div><div class="m"><div class="muted">Modo</div><div class="v">Public</div></div><div class="m"><div class="muted">Status</div><div class="v">OK</div></div></div><div class="toolbar"><input id="search" class="search" placeholder="Pesquisar regra"><button id="clear" class="btn">Limpar</button></div><div id="rules" class="rules"></div></div></div><script>
+  const rules = [
   {
     "n": "1",
     "title": "Falação do Elzio",
@@ -98,7 +58,13 @@ const rules = [
   {
     "n": "12",
     "title": "Sistema de balões",
-    "text": "Os Balões iniciam com 30 minutos de banimento e, havendo reincidência, serão somados os primeiros 30 minutos com eventuais novos balões."
+    "text": "Os Balões iniciam com 30 minutos de banimento e, havendo reincidência, serão somados os primeiros 30 minutos com eventuais novos balões.",
+    "sub": [
+      "12.1. Balões serão dados conforme a pontuação no quadro de pontos do item 22.",
+      "12.2. Com 7 pontos, o quadro autorizará o banimento do membro do grupo pelo dobro do tempo dado à punições normais.",
+      "12.3. Depois de 7 pontos e cumprido o balão, o quadro será resetado para o membro punido.",
+      "12.4. A reincidência em punição pelo quadro de pontos fará com que a punição seja o dobro do item 12.2."
+    ]
   },
   {
     "n": "13",
@@ -155,17 +121,22 @@ const rules = [
     "text": "O score dos membros irá decair conforme as aparições deste membro no quadro de banimentos for ocorrendo."
   }
 ];
-const rulesEl = document.getElementById('rules');
-const search = document.getElementById('search');
-const clear = document.getElementById('clear');
-function render(q=''){
-  const k = q.trim().toLowerCase();
-  const items = rules.filter(r => [r.n,r.title,r.text,...(r.sub||[])].join(' ').toLowerCase().includes(k));
-  rulesEl.innerHTML = items.map(r => `<article class="rule"><h2>${r.n}. ${r.title}</h2><p class="muted">${r.text}</p>${r.sub?.length ? `<ul>${r.sub.map(x=>`<li class="muted">${x}</li>`).join('')}</ul>` : ''}</article>`).join('') || '<article class="rule"><h2>Nenhuma regra encontrada</h2></article>';
-}
-search.oninput = e => render(e.target.value);
-clear.onclick = () => { search.value=''; render(); };
-render();
-</script>
-</body>
-</html>
+  const rulesEl=document.getElementById('rules');const search=document.getElementById('search');const clear=document.getElementById('clear');
+  function render(q=''){
+    const k=q.trim().toLowerCase();
+    const items=rules.filter(r=>[r.n,r.title,r.text,...(r.sub||[])].join(' ').toLowerCase().includes(k));
+    let h = '';
+    for(let i=0; i<items.length; i++){
+      let r = items[i];
+      h += '<article class="rule"><h2>'+r.n+'. '+r.title+'</h2><p class="muted">'+r.text+'</p>';
+      if(r.sub && r.sub.length) {
+         h += '<ul>' + r.sub.map(x=>'<li class="muted">'+x+'</li>').join('') + '</ul>';
+      }
+      h += '</article>';
+    }
+    rulesEl.innerHTML=h || '<article class="rule"><h2>Nenhuma regra encontrada</h2></article>';
+  }
+  search.oninput=e=>render(e.target.value);
+  clear.onclick=()=>{search.value='';render();};
+  render();
+  </script></body></html>
