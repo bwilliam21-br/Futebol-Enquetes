@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Futebol & Enquetes</title>
+  <style>
+    body{margin:0;font-family:Arial,sans-serif;background:#0b1210;color:#eef6ef}
+    .wrap{max-width:1200px;margin:0 auto;padding:20px}
+    .card{background:#101a16;border:1px solid #2f473c;border-radius:18px;padding:16px}
+    .rules{display:grid;gap:12px;margin-top:16px}
+    .rule{background:#101a16;border:1px solid #2f473c;border-radius:16px;padding:14px}
+    .muted{color:#adc2b2}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+    .search{flex:1;min-height:44px;padding:0 14px;border-radius:999px;border:1px solid #2f473c;background:#0c1411;color:#eef6ef}
+    .btn{min-height:44px;border-radius:999px;border:1px solid #2f473c;background:#15231d;color:#eef6ef;padding:0 14px;font-weight:700}
+    .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:12px 0 16px}
+    .m{padding:14px;border-radius:16px;background:#101a16;border:1px solid #2f473c}
+    .m .v{font-size:2rem;font-weight:900}
+    @media (max-width:900px){.metrics{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>Futebol & Enquetes</h1>
+    <p class="muted">Versão pública somente leitura.</p>
+    <div class="metrics">
+      <div class="m"><div class="muted">Regras</div><div class="v">21</div></div>
+      <div class="m"><div class="muted">Subitens</div><div class="v">5</div></div>
+      <div class="m"><div class="muted">Modo</div><div class="v">Public</div></div>
+      <div class="m"><div class="muted">Status</div><div class="v">OK</div></div>
+    </div>
+    <div class="toolbar">
+      <input id="search" class="search" placeholder="Pesquisar regra" />
+      <button id="clear" class="btn">Limpar</button>
+    </div>
+    <div id="rules" class="rules"></div>
+  </div>
+</div>
+<script>
+const rules = [
+  {
+    "n": "1",
+    "title": "Falação do Elzio",
+    "text": "Elzio só tem direito a falar merda 99% das vezes que comenta."
+  },
+  {
+    "n": "2",
+    "title": "Clubismo",
+    "text": "Clubismo é amplamente incentivado."
+  },
+  {
+    "n": "3",
+    "title": "Zoeira",
+    "text": "A zoeira é totalmente liberada."
+  },
+  {
+    "n": "4",
+    "title": "Compliance do dia",
+    "text": "Elzio já comeu a Censurado pelo Compliance hoje?"
+  },
+  {
+    "n": "5",
+    "title": "Putaria fora do comercial",
+    "text": "Vale mandar putaria nos horários não comerciais."
+  },
+  {
+    "n": "6",
+    "title": "Aparição do Tanure",
+    "text": "Tanure deve fazer ao menos uma aparição pontual mensal com alguma informação relevante."
+  },
+  {
+    "n": "7",
+    "title": "Perguntas via enquete",
+    "text": "Perguntas devem ser feitas através de enquetes."
+  },
+  {
+    "n": "8",
+    "title": "Linguagem neutra",
+    "text": "Linguagem neutra é totalmente vedada."
+  },
+  {
+    "n": "9",
+    "title": "Aviso NSFW",
+    "text": "Links ou assuntos cujo uso durante o expediente seja prejudicial são liberados desde que acrescentada a sigla NSFW para aviso prévio."
+  },
+  {
+    "n": "10",
+    "title": "Animosidade com limite",
+    "text": "A animosidade é permitida desde que não se dê causa a vias de fato e a crimes."
+  },
+  {
+    "n": "11",
+    "title": "Score Sararout",
+    "text": "O Ranking de Clubismo gera pontuação no score Sararout conforme entendimento unânime do grupo."
+  },
+  {
+    "n": "12",
+    "title": "Sistema de balões",
+    "text": "Os Balões iniciam com 30 minutos de banimento e, havendo reincidência, serão somados os primeiros 30 minutos com eventuais novos balões."
+  },
+  {
+    "n": "13",
+    "title": "Imagem do grupo",
+    "text": "Prevalecerá como imagem do grupo por tempo determinado as fotos de membros do grupo com pessoas famosas emblemáticas. Será atualizada no instante que obtivermos novas fotos."
+  },
+  {
+    "n": "14",
+    "title": "Exceção dos políticos",
+    "text": "Estão excluídas dessa regra fotos com políticos, sobretudo os de estimação."
+  },
+  {
+    "n": "15",
+    "title": "Enquetes são sérias",
+    "text": "As enquetes são assuntos sérios.",
+    "sub": [
+      "15.1 Toda enquete deve ser minimamente clara, objetiva e com propósito.",
+      "15.2 Enquetes genéricas, sem sentido ou feitas apenas “por fazer” serão passíveis de balão imediato conforme item 12.",
+      "15.3 A reincidência de enquetes inúteis poderá gerar perda de pontos no score Sararout."
+    ]
+  },
+  {
+    "n": "16",
+    "title": "Fofocas com procedência",
+    "text": "Fofocas devem ter procedência.",
+    "sub": [
+      "16.1 Boatos infundados, sem ao menos uma fonte, print ou áudio, serão tratados como tentativa de tumulto.",
+      "16.2 Fofoca boa é aquela com potencial de abalar estruturas e, portanto, precisa de lastro mínimo de verdade."
+    ]
+  },
+  {
+    "n": "17",
+    "title": "Advertências e balão",
+    "text": "Recebendo o total de cinco advertências, o membro tomará um balão por 30 minutos conforme item 12."
+  },
+  {
+    "n": "18",
+    "title": "Presunção de informalidade",
+    "text": "As discussões deste grupo se presumem em um aspecto informal e não técnico na maior parte das vezes. Com certeza existem muitos fatores exteriores que serão desconsiderados. Favor relevar."
+  },
+  {
+    "n": "19",
+    "title": "Nome proibido",
+    "text": "Quaisquer menções ao nome do goleiro inominável titular da Argentina na Copa do Mundo de 2022 será banido por 7 dias."
+  },
+  {
+    "n": "20",
+    "title": "Política e administração",
+    "text": "Manifestações de cunho estritamente político serão consideradas passíveis de banimento pela administração."
+  },
+  {
+    "n": "21",
+    "title": "Score de membros",
+    "text": "O score dos membros irá decair conforme as aparições deste membro no quadro de banimentos for ocorrendo."
+  }
+];
+const rulesEl = document.getElementById('rules');
+const search = document.getElementById('search');
+const clear = document.getElementById('clear');
+function render(q=''){
+  const k = q.trim().toLowerCase();
+  const items = rules.filter(r => [r.n,r.title,r.text,...(r.sub||[])].join(' ').toLowerCase().includes(k));
+  rulesEl.innerHTML = items.map(r => `<article class="rule"><h2>${r.n}. ${r.title}</h2><p class="muted">${r.text}</p>${r.sub?.length ? `<ul>${r.sub.map(x=>`<li class="muted">${x}</li>`).join('')}</ul>` : ''}</article>`).join('') || '<article class="rule"><h2>Nenhuma regra encontrada</h2></article>';
+}
+search.oninput = e => render(e.target.value);
+clear.onclick = () => { search.value=''; render(); };
+render();
+</script>
+</body>
+</html>
