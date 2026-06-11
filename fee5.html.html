@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Futebol & Enquetes — Admin v4</title>
+  <meta name="description" content="Painel para editar regras do grupo Futebol & Enquetes e exportar o HTML pronto." />
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
+  <style>
+    :root, [data-theme="light"] {
+      --bg:#f5f7f2; --surface:#fcfdfb; --surface-2:#eef4ea; --border:#c8d3c0; --text:#102016; --muted:#506155; --faint:#819084; --primary:#0d6b3c; --primary-hover:#0b5731; --gold:#d6a300; --danger:#a33a5d; --ok:#0d8a52; --radius:16px; --radius-lg:22px; --shadow:0 12px 34px rgba(16,32,22,.10); --shadow-2:0 18px 50px rgba(16,32,22,.14);
+    }
+    [data-theme="dark"] {
+      --bg:#0b1210; --surface:#101a16; --surface-2:#15231d; --border:#2f473c; --text:#eef6ef; --muted:#adc2b2; --faint:#6f8a7b; --primary:#2fb66c; --primary-hover:#52ca87; --gold:#f1c84e; --danger:#f06495; --ok:#4be08a; --shadow:0 12px 34px rgba(0,0,0,.28); --shadow-2:0 18px 50px rgba(0,0,0,.38);
+    }
+    *{box-sizing:border-box} html,body{margin:0;min-height:100%} body{font-family:'Satoshi',Inter,sans-serif;background:radial-gradient(circle at top right, rgba(47,182,108,.18), transparent 24%),radial-gradient(circle at bottom left, rgba(241,200,78,.10), transparent 20%),linear-gradient(180deg,var(--bg),#0d1713 120%);color:var(--text)}
+    button,input,textarea,select{font:inherit;color:inherit} button{cursor:pointer} a{color:inherit;text-decoration:none}
+    .wrap{max-width:1480px;margin:0 auto;padding:20px}
+    .gate,.shell,.panel,.card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(12px);box-shadow:var(--shadow)}
+    .gate{max-width:540px;margin:8vh auto;padding:28px;border-radius:28px}
+    .brand{display:flex;gap:14px;align-items:center;margin-bottom:18px}.mark{width:62px;height:62px;border-radius:20px;display:grid;place-items:center;background:linear-gradient(135deg, rgba(47,182,108,.18), rgba(241,200,78,.18));border:1px solid rgba(255,255,255,.1)}
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;background:rgba(241,200,78,.12);border:1px solid rgba(241,200,78,.25);color:var(--gold);font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin:8px 0 14px}
+    h1{margin:0 0 10px;font-size:clamp(2rem,4vw,3rem);line-height:1.02;letter-spacing:-.05em}.muted{color:var(--muted)}
+    .row{display:grid;gap:12px}.input,.textarea,.select{width:100%;padding:13px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.18);color:var(--text)} .textarea{min-height:120px;resize:vertical}.small{font-size:13px;color:var(--muted)}
+    .btn{min-height:44px;border:none;border-radius:999px;padding:0 16px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:8px}.btn-primary{background:var(--primary);color:#07100b}.btn-secondary{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)}.btn-danger{background:rgba(240,100,149,.14);border:1px solid rgba(240,100,149,.24);color:var(--text)}
+    .shell{display:grid;grid-template-columns:340px 1fr;gap:18px;border-radius:28px;padding:18px;min-height:calc(100vh - 40px)}
+    .sidebar,.main{min-width:0}.sidebar{display:grid;gap:14px;align-content:start}.section{padding:16px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
+    .section h2{margin:0 0 8px;font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+    .pillrow{display:flex;flex-wrap:wrap;gap:8px}.pill{padding:7px 10px;border-radius:999px;background:rgba(47,182,108,.12);border:1px solid rgba(47,182,108,.24);font-size:12px;font-weight:800}
+    .topbar{display:flex;justify-content:space-between;gap:12px;align-items:start;margin-bottom:16px}.top-actions{display:flex;gap:10px;flex-wrap:wrap}
+    .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:14px 0 18px}.metric{padding:16px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}.metric .k{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}.metric .v{font-size:2rem;font-weight:900;letter-spacing:-.04em}.metric .d{font-size:13px;color:var(--muted)}
+    .content{display:grid;grid-template-columns:1.25fr .95fr;gap:14px;align-items:start}.panel{padding:18px;border-radius:22px}.panel h2{margin:0 0 8px;font-size:20px;letter-spacing:-.03em}.panel p{color:var(--muted)}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 16px}.search{flex:1 1 260px}.list{display:grid;gap:12px}.rule{padding:16px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);position:relative}.rule:before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:18px 0 0 18px;background:linear-gradient(180deg,var(--primary),var(--gold))}.rule h3{margin:0 0 8px;font-size:16px}.rule p,.rule li{color:var(--muted);font-size:14px}.rule ul{margin:10px 0 0 18px}
+    .formgrid{display:grid;gap:10px}.editor-card{padding:16px;border-radius:18px;background:linear-gradient(180deg, rgba(47,182,108,.08), rgba(255,255,255,.03));border:1px solid rgba(47,182,108,.18)}
+    .output{min-height:240px;white-space:pre-wrap;word-break:break-word;padding:14px;border-radius:16px;background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.08);font-size:13px;color:var(--text)}
+    .split{display:grid;grid-template-columns:1fr 1fr;gap:10px}.footer{margin-top:8px;color:var(--faint);font-size:12px}
+    .hidden{display:none !important}
+    @media (max-width: 1180px){.shell{grid-template-columns:1fr}.content,.grid{grid-template-columns:1fr 1fr}}
+    @media (max-width: 760px){.wrap{padding:10px}.shell{padding:12px;border-radius:20px}.grid,.content,.split{grid-template-columns:1fr}.topbar{flex-direction:column}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="gate" id="gate">
+      <div class="brand">
+        <div class="mark" aria-hidden="true">
+          <svg viewBox="0 0 72 72" width="40" height="40" fill="none" stroke="currentColor" stroke-width="4"><circle cx="36" cy="36" r="29"></circle><path d="M36 17l10 7-4 12H30l-4-12 10-7Z" fill="currentColor" opacity=".92" stroke="none"></path><path d="M18 46h14l4 10M54 46H40l-4 10" stroke-linecap="round"></path><path d="M56 18v16M64 26H48" stroke="#f1c84e" stroke-linecap="round"></path></svg>
+        </div>
+        <div><div style="font-weight:900;font-size:22px;line-height:1.05">Futebol &amp; Enquetes</div><div class="muted">Painel administrativo v4</div></div>
+      </div>
+      <div class="eyebrow">Acesso protegido</div>
+      <h1>Editor visual de regras</h1>
+      <p class="muted">Entre com a senha para criar, editar, remover, importar e exportar regras sem mexer no bloco manualmente.</p>
+      <div class="row" style="margin-top:18px">
+        <input class="input" id="password" type="password" placeholder="Senha" />
+        <button class="btn btn-primary" id="login">Entrar</button>
+        <div class="small" id="gateMsg"></div>
+      </div>
+    </section>
+
+    <section class="shell hidden" id="shell">
+      <aside class="sidebar">
+        <div class="section">
+          <h2>Administração</h2>
+          <p>Versão 4: edite tudo em formulário visual e exporte o HTML pronto para publicação no GitHub Pages.</p>
+          <div class="pillrow"><span class="pill">Editor visual</span><span class="pill">Exportar HTML</span><span class="pill">Importar regras</span></div>
+        </div>
+
+        <div class="section">
+          <h2>Senha</h2>
+          <p class="small">Senha padrão embutida no arquivo: <strong>Troque-Essa-Senha-Agora-2026</strong></p>
+          <p class="small">Troque antes de publicar.</p>
+        </div>
+
+        <div class="section">
+          <h2>Novo item</h2>
+          <div class="formgrid">
+            <input class="input" id="n" placeholder="Número. Ex.: 21" />
+            <input class="input" id="title" placeholder="Título da regra" />
+            <textarea class="textarea" id="text" placeholder="Texto principal"></textarea>
+            <textarea class="textarea" id="subs" placeholder="Subitens, um por linha"></textarea>
+            <div class="split">
+              <button class="btn btn-primary" id="add">Adicionar</button>
+              <button class="btn btn-secondary" id="clearForm">Limpar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>Exportar / Importar</h2>
+          <div class="formgrid">
+            <button class="btn btn-primary" id="exportHtml">Exportar HTML pronto</button>
+            <button class="btn btn-secondary" id="exportJson">Exportar JSON</button>
+            <label class="btn btn-secondary" style="justify-content:center;cursor:pointer">
+              Importar JSON
+              <input id="importJson" type="file" accept="application/json" class="hidden" />
+            </label>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main">
+        <div class="topbar">
+          <div>
+            <div class="eyebrow">Painel ativo</div>
+            <h1 style="margin-bottom:8px">Futebol &amp; Enquetes</h1>
+            <p>Lista de regras + editor visual + exportação do conteúdo pronto.</p>
+          </div>
+          <div class="top-actions">
+            <button class="btn btn-secondary" id="theme">Tema</button>
+            <button class="btn btn-secondary" id="copyJson">Copiar JSON</button>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="metric"><div class="k">Regras</div><div class="v" id="count">0</div><div class="d">Itens cadastrados</div></div>
+          <div class="metric"><div class="k">Subitens</div><div class="v" id="subsCount">0</div><div class="d">Total de linhas auxiliares</div></div>
+          <div class="metric"><div class="k">Modelo</div><div class="v">v4</div><div class="d">Editor visual</div></div>
+          <div class="metric"><div class="k">Status</div><div class="v" id="statusTxt">OK</div><div class="d">Pronto para exportação</div></div>
+        </div>
+
+        <div class="content">
+          <section class="panel">
+            <h2>Regras</h2>
+            <div class="toolbar">
+              <input class="input search" id="search" placeholder="Pesquisar por número, título ou texto" />
+              <button class="btn btn-secondary" id="resetSearch">Limpar busca</button>
+            </div>
+            <div class="list" id="list"></div>
+          </section>
+
+          <section class="panel">
+            <h2>Prévia do bloco</h2>
+            <div class="editor-card">
+              <p class="small">Aqui aparece a regra recém-criada em formato pronto para colar no HTML, além do JSON completo para exportação.</p>
+              <div class="output" id="output">Nenhuma seleção ainda.</div>
+            </div>
+            <div class="footer">Dica: clique em uma regra para editá-la no formulário acima.</div>
+          </section>
+        </div>
+      </main>
+    </section>
+  </div>
+
+<script>
+const ACCESS_PASSWORD = 'Troque-Essa-Senha-Agora-2026';
+let rules = [
+  { n: '1', title: 'Falação do Elzio', text: 'Elzio só tem direito a falar merda 99% das vezes que comenta.' },
+  { n: '2', title: 'Clubismo', text: 'Clubismo é amplamente incentivado.' },
+  { n: '3', title: 'Zoeira', text: 'A zoeira é totalmente liberada.' },
+  { n: '4', title: 'Compliance do dia', text: 'Elzio já comeu a Censurado pelo Compliance hoje?' },
+  { n: '5', title: 'Putaria fora do comercial', text: 'Vale mandar putaria nos horários não comerciais.' },
+  { n: '6', title: 'Aparição do Tanure', text: 'Tanure deve fazer ao menos uma aparição pontual mensal com alguma informação relevante.' },
+  { n: '7', title: 'Perguntas via enquete', text: 'Perguntas devem ser feitas através de enquetes.' },
+  { n: '8', title: 'Linguagem neutra', text: 'Linguagem neutra é totalmente vedada.' },
+  { n: '9', title: 'Aviso NSFW', text: 'Links ou assuntos cujo uso durante o expediente seja prejudicial são liberados desde que acrescentada a sigla NSFW para aviso prévio.' },
+  { n: '10', title: 'Animosidade com limite', text: 'A animosidade é permitida desde que não se dê causa a vias de fato e a crimes.' },
+  { n: '11', title: 'Score Sararout', text: 'O Ranking de Clubismo gera pontuação no score Sararout conforme entendimento unânime do grupo.' },
+  { n: '12', title: 'Sistema de balões', text: 'Os Balões iniciam com 30 minutos de banimento e, havendo reincidência, serão somados os primeiros 30 minutos com eventuais novos balões.' },
+  { n: '13', title: 'Imagem do grupo', text: 'Prevalecerá como imagem do grupo por tempo determinado as fotos de membros do grupo com pessoas famosas emblemáticas. Será atualizada no instante que obtivermos novas fotos.' },
+  { n: '14', title: 'Exceção dos políticos', text: 'Estão excluídas dessa regra fotos com políticos, sobretudo os de estimação.' },
+  { n: '15', title: 'Enquetes são sérias', text: 'As enquetes são assuntos sérios.', sub: ['15.1 Toda enquete deve ser minimamente clara, objetiva e com propósito.', '15.2 Enquetes genéricas, sem sentido ou feitas apenas “por fazer” serão passíveis de balão imediato conforme item 12.', '15.3 A reincidência de enquetes inúteis poderá gerar perda de pontos no score Sararout.'] },
+  { n: '16', title: 'Fofocas com procedência', text: 'Fofocas devem ter procedência.', sub: ['16.1 Boatos infundados, sem ao menos uma fonte, print ou áudio, serão tratados como tentativa de tumulto.', '16.2 Fofoca boa é aquela com potencial de abalar estruturas e, portanto, precisa de lastro mínimo de verdade.'] },
+  { n: '17', title: 'Advertências e balão', text: 'Recebendo o total de cinco advertências, o membro tomará um balão por 30 minutos conforme item 12.' },
+  { n: '18', title: 'Presunção de informalidade', text: 'As discussões deste grupo se presumem em um aspecto informal e não técnico na maior parte das vezes. Com certeza existem muitos fatores exteriores que serão desconsiderados. Favor relevar.' },
+  { n: '19', title: 'Nome proibido', text: 'Quaisquer menções ao nome do goleiro inominável titular da Argentina na Copa do Mundo de 2022 será banido por 7 dias.' },
+  { n: '20', title: 'Política e administração', text: 'Manifestações de cunho estritamente político serão consideradas passíveis de banimento pela administração.' }
+];
+
+const gate = document.getElementById('gate');
+const shell = document.getElementById('shell');
+const output = document.getElementById('output');
+const list = document.getElementById('list');
+const search = document.getElementById('search');
+const count = document.getElementById('count');
+const subsCount = document.getElementById('subsCount');
+const statusTxt = document.getElementById('statusTxt');
+const form = { n: document.getElementById('n'), title: document.getElementById('title'), text: document.getElementById('text'), subs: document.getElementById('subs') };
+let editingIndex = -1;
+
+function esc(s){return String(s).replaceAll('\\','\\\\').replaceAll("'","\\'")}
+function renderPreview(rule){
+  if(!rule){ output.textContent = 'Nenhuma seleção ainda.'; return; }
+  const block = `{\n  n: '${esc(rule.n)}',\n  title: '${esc(rule.title)}',\n  text: '${esc(rule.text)}'${rule.sub?.length ? ',\n  sub: [\n' + rule.sub.map(x => `    '${esc(x)}'`).join(',\n') + '\n  ]' : ''}\n}`;
+  output.textContent = block + '\n\nJSON:\n' + JSON.stringify(rule, null, 2);
+}
+function syncMetrics(){
+  count.textContent = rules.length;
+  subsCount.textContent = rules.reduce((a,r)=>a+(r.sub?r.sub.length:0),0);
+  statusTxt.textContent = rules.length ? 'OK' : 'Vazio';
+}
+function matches(rule, q){
+  return [rule.n, rule.title, rule.text, ...(rule.sub||[])].join(' ').toLowerCase().includes(q);
+}
+function render(){
+  const q = search.value.trim().toLowerCase();
+  const items = rules.filter(r => matches(r, q));
+  list.innerHTML = items.map((r, idx) => `
+    <article class="rule" data-idx="${rules.indexOf(r)}">
+      <h3>${r.n}. ${r.title}</h3>
+      <p>${r.text}</p>
+      ${r.sub?.length ? `<ul>${r.sub.map(s=>`<li>${s}</li>`).join('')}</ul>` : ''}
+      <div class="toolbar" style="margin-top:12px">
+        <button class="btn btn-secondary editBtn" data-i="${rules.indexOf(r)}">Editar</button>
+        <button class="btn btn-danger delBtn" data-i="${rules.indexOf(r)}">Remover</button>
+      </div>
+    </article>
+  `).join('') || '<div class="rule"><h3>Nenhuma regra encontrada</h3><p>Tente outro termo.</p></div>';
+  syncMetrics();
+  if (editingIndex >= 0 && rules[editingIndex]) renderPreview(rules[editingIndex]);
+}
+function fillForm(rule, idx){
+  editingIndex = idx;
+  form.n.value = rule.n || '';
+  form.title.value = rule.title || '';
+  form.text.value = rule.text || '';
+  form.subs.value = (rule.sub || []).join('\n');
+  renderPreview(rule);
+}
+function clearForm(){ editingIndex = -1; form.n.value=''; form.title.value=''; form.text.value=''; form.subs.value=''; output.textContent = 'Nenhuma seleção ainda.'; }
+function getFormRule(){
+  const n = form.n.value.trim();
+  const title = form.title.value.trim();
+  const text = form.text.value.trim();
+  const subs = form.subs.value.split(/\n+/).map(s=>s.trim()).filter(Boolean);
+  if(!n || !title || !text) return null;
+  const rule = { n, title, text };
+  if(subs.length) rule.sub = subs;
+  return rule;
+}
+
+document.getElementById('login').onclick = () => {
+  const pwd = document.getElementById('password').value;
+  document.getElementById('gateMsg').textContent = pwd === ACCESS_PASSWORD ? 'Acesso liberado.' : 'Senha incorreta.';
+  if(pwd !== ACCESS_PASSWORD) return;
+  gate.classList.add('hidden');
+  shell.classList.remove('hidden');
+  render();
+};
+
+document.getElementById('add').onclick = () => {
+  const rule = getFormRule();
+  if(!rule){ alert('Preencha número, título e texto.'); return; }
+  if(editingIndex >= 0) rules[editingIndex] = rule; else rules.push(rule);
+  clearForm(); render();
+};
+document.getElementById('clearForm').onclick = clearForm;
+document.getElementById('resetSearch').onclick = () => { search.value=''; render(); };
+search.oninput = render;
+document.getElementById('copyJson').onclick = async () => { await navigator.clipboard.writeText(JSON.stringify(rules, null, 2)); };
+document.getElementById('exportJson').onclick = () => {
+  const blob = new Blob([JSON.stringify(rules, null, 2)], {type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'regras-futebol-enquetes.json'; a.click();
+};
+document.getElementById('importJson').onchange = async (e) => {
+  const file = e.target.files[0]; if(!file) return; const data = await file.text(); rules = JSON.parse(data); clearForm(); render();
+};
+document.getElementById('exportHtml').onclick = () => {
+  const html = document.documentElement.outerHTML.replace(/const ACCESS_PASSWORD = '.*?';/, `const ACCESS_PASSWORD = '${ACCESS_PASSWORD}';`).replace(/let rules = \[[\s\S]*?\n\];/, 'let rules = ' + JSON.stringify(rules, null, 2).replace(/^/gm, '  ') + ';');
+  const blob = new Blob([html], {type:'text/html'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'futebol-enquetes-publicacao.html'; a.click();
+};
+
+document.getElementById('theme').onclick = () => {
+  const root = document.documentElement; root.setAttribute('data-theme', root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+};
+
+document.addEventListener('click', (e) => {
+  const ed = e.target.closest('.editBtn');
+  if(ed){ fillForm(rules[Number(ed.dataset.i)], Number(ed.dataset.i)); }
+  const dl = e.target.closest('.delBtn');
+  if(dl){ rules.splice(Number(dl.dataset.i), 1); clearForm(); render(); }
+});
+render();
+</script>
+</body>
+</html>
